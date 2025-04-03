@@ -1,0 +1,91 @@
+basePath: /
+definitions:
+  document.Document:
+    properties:
+      fileName:
+        type: string
+      id:
+        type: string
+      uploadedAt:
+        type: string
+      url:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: A simple document management API.
+  title: Document API
+  version: "1.0"
+paths:
+  /documents:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Document file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Upload a document
+  /documents/{id}:
+    get:
+      description: Streams a document file by ID
+      parameters:
+      - description: Document ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Download a document
+      tags:
+      - documents
+  /documents/{id}/meta:
+    get:
+      description: Retrieves metadata for a document
+      parameters:
+      - description: Document ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/document.Document'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get document metadata
+      tags:
+      - documents
+swagger: "2.0"
