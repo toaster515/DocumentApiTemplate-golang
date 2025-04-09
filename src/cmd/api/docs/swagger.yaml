@@ -2,6 +2,8 @@ basePath: /
 definitions:
   document.Document:
     properties:
+      description:
+        type: string
       fileName:
         type: string
       id:

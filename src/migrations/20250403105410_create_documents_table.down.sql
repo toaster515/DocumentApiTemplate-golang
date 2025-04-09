@@ -1,1 +1,1 @@
-DROP TABLE documents;
+DROP TABLE file_records;

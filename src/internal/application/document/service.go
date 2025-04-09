@@ -12,7 +12,7 @@ type Service struct {
 	Repo    document.MetadataRepository
 }
 
-func (s *Service) Upload(name string, data []byte) (string, error) {
+func (s *Service) Upload(name string, description string, data []byte) (string, error) {
 	id := uuid.NewString()
 	url, err := s.Storage.UploadFile(id, data)
 	if err != nil {
@@ -20,10 +20,11 @@ func (s *Service) Upload(name string, data []byte) (string, error) {
 	}
 
 	doc := document.Document{
-		ID:         id,
-		FileName:   name,
-		Url:        url,
-		UploadedAt: time.Now(),
+		ID:          id,
+		FileName:    name,
+		Url:         url,
+		UploadedAt:  time.Now(),
+		Description: description,
 	}
 
 	if err := s.Repo.SaveMetadata(doc); err != nil {

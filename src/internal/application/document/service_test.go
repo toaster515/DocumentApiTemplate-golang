@@ -33,9 +33,13 @@ func TestUpload(t *testing.T) {
 	repo := &mockRepo{}
 	service := app.Service{Storage: storage, Repo: repo}
 
-	id, err := service.Upload("test.txt", []byte("dummy content"))
+	id, err := service.Upload("test.txt", "testfile", []byte("dummy content"))
 	if err != nil {
 		t.Fatalf("Upload failed: %v", err)
+	}
+
+	if repo.saved.Description != "testfile" {
+		t.Errorf("Expected description 'testfile', got %s", repo.saved.Description)
 	}
 
 	if repo.saved.ID != id {

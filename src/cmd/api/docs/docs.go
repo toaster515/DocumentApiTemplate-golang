@@ -127,6 +127,9 @@ const docTemplate = `{
         "document.Document": {
             "type": "object",
             "properties": {
+                "description": {
+                    "type": "string"
+                },
                 "fileName": {
                     "type": "string"
                 },

@@ -22,12 +22,35 @@ type DocumentHandler struct {
 // @Success 201 {object} map[string]string
 // @Router /documents [post]
 func (h *DocumentHandler) Upload(w http.ResponseWriter, r *http.Request) {
-	file, header, err := r.FormFile("file")
+	err := r.ParseMultipartForm(10 << 20) // 10 MB
+	if err != nil {
+		http.Error(w, "Failed to parse form", http.StatusBadRequest)
+		return
+	}
+
+	file, _, err := r.FormFile("file")
 	if err != nil {
 		http.Error(w, "File upload error", http.StatusBadRequest)
 		return
 	}
 	defer file.Close()
+
+	// metadata JSON
+	metaJson := r.FormValue("metadata")
+	if metaJson == "" {
+		http.Error(w, "Missing metadata", http.StatusBadRequest)
+		return
+	}
+
+	// metadata struct
+	var meta struct {
+		Name        string `json:"name"`
+		Description string `json:"description"`
+	}
+	if err := json.Unmarshal([]byte(metaJson), &meta); err != nil {
+		http.Error(w, "Invalid metadata", http.StatusBadRequest)
+		return
+	}
 
 	data, err := io.ReadAll(file)
 	if err != nil {
@@ -35,7 +58,7 @@ func (h *DocumentHandler) Upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := h.Service.Upload(header.Filename, data)
+	id, err := h.Service.Upload(meta.Name, meta.Description, data)
 	if err != nil {
 		http.Error(w, "Upload failed", http.StatusInternalServerError)
 		return
