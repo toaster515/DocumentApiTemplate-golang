@@ -87,3 +87,29 @@ To regenerate:
 `cd src swag init --generalInfo cmd/api/main.go --output cmd/api/docs`
 
 You can test swagger locally at `http://localhost:8080/swagger/index.html`
+
+However, I set this up parse a multipart request for file uploads with metadata in one call, so testing it via the swagger is difficult. 
+
+Here is an example python call to test:
+
+```python
+import requests
+import json
+
+url = "http://localhost:8080/documents"
+
+metadata = {
+    "name": "example.txt",
+    "description":"test description"
+}
+
+files = {
+    'file': ('test.txt', open('test.txt', 'rb'), 'text/plain'),
+    'metadata': (None, json.dumps(metadata), "application/json")
+}
+
+response = requests.post(url, files=files)
+
+print("Status Code:", response.status_code)
+print("Response:", response.json)
+```
